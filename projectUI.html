@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library Management System</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: linear-gradient(to right, #667eea, #764ba2);
+      padding: 30px;
+      margin: 0;
+      color: #333;
+    }
+    .container {
+      background: #fff;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      max-width: 900px;
+      margin: auto;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #4e54c8;
+    }
+    input, button {
+      padding: 14px;
+      margin: 10px 0;
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: all 0.3s ease-in-out;
+    }
+    input:focus {
+      border-color: #4e54c8;
+      outline: none;
+      box-shadow: 0 0 5px rgba(78,84,200,0.5);
+    }
+    button {
+      background: #4e54c8;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #5a60d1;
+    }
+    .book {
+      padding: 14px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      background: #f0f0ff;
+      border-left: 6px solid #4e54c8;
+      transition: transform 0.2s;
+    }
+    .book:hover {
+      transform: scale(1.02);
+    }
+    .book button {
+      width: auto;
+      margin-left: 10px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .book button:first-of-type {
+      background: #28a745;
+    }
+    .book button:last-of-type {
+      background: #dc3545;
+    }
+    #borrowedBooks {
+      margin-top: 15px;
+      padding: 15px;
+      background: #fff9db;
+      border-left: 6px solid #ffc107;
+      border-radius: 10px;
+    }
+    .section {
+      margin-bottom: 40px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📚 Library Management System</h1>
+
+    <div id="auth" class="section">
+      <h2>🔐 Login</h2>
+      <input type="text" id="loginUser" placeholder="Username">
+      <input type="password" id="loginPass" placeholder="Password">
+      <button onclick="login()">Login</button>
+      <h2>🆕 Register</h2>
+      <input type="text" id="regUser" placeholder="New Username">
+      <input type="password" id="regPass" placeholder="New Password">
+      <button onclick="registerUser()">Register</button>
+    </div>
+
+    <div id="library" style="display:none;">
+      <div class="section">
+        <h2>➕ Add Book</h2>
+        <input type="text" id="bookName" placeholder="Book Name">
+        <input type="text" id="authorName" placeholder="Author Name">
+        <button onclick="addBook()">Add Book</button>
+      </div>
+
+      <div class="section">
+        <h2>📖 All Books</h2>
+        <div id="bookList"></div>
+      </div>
+
+      <div class="section">
+        <h2>📕 Borrowed Books</h2>
+        <div id="borrowedBooks"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let isLoggedIn = false;
+    const books = [];
+
+    function registerUser() {
+      alert("User registered (not persisted in browser version).");
+    }
+
+    function login() {
+      const user = document.getElementById("loginUser").value;
+      const pass = document.getElementById("loginPass").value;
+      if (user && pass) {
+        isLoggedIn = true;
+        document.getElementById("auth").style.display = "none";
+        document.getElementById("library").style.display = "block";
+        alert("Logged in successfully");
+      } else {
+        alert("Enter credentials");
+      }
+    }
+
+    function addBook() {
+      const name = document.getElementById("bookName").value;
+      const author = document.getElementById("authorName").value;
+      if (name && author) {
+        books.push({ name, author, isBorrowed: false });
+        displayBooks();
+        alert("Book added");
+      }
+    }
+
+    function displayBooks() {
+      const bookList = document.getElementById("bookList");
+      bookList.innerHTML = "";
+      books.forEach((b, i) => {
+        bookList.innerHTML += `<div class='book'>${i+1}. <strong>${b.name}</strong> by ${b.author} ${b.isBorrowed ? "<em>(Borrowed)</em>" : ""} 
+          <button onclick='borrowBook(${i})'>Borrow</button> 
+          <button onclick='returnBook(${i})'>Return</button></div>`;
+      });
+      displayBorrowedBooks();
+    }
+
+    function borrowBook(index) {
+      if (!books[index].isBorrowed) {
+        books[index].isBorrowed = true;
+        displayBooks();
+        alert("Book borrowed");
+      } else {
+        alert("Already borrowed");
+      }
+    }
+
+    function returnBook(index) {
+      if (books[index].isBorrowed) {
+        books[index].isBorrowed = false;
+        displayBooks();
+        alert("Book returned");
+      }
+    }
+
+    function displayBorrowedBooks() {
+      const list = document.getElementById("borrowedBooks");
+      list.innerHTML = books.filter(b => b.isBorrowed).map((b, i) => `${i+1}. <strong>${b.name}</strong> by ${b.author}`).join("<br>") || "No borrowed books";
+    }
+  </script>
+</body>
+</html>
